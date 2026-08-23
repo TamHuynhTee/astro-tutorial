@@ -1,17 +1,23 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
-const allPosts = Object.values(
-  import.meta.glob("../posts/*.md", { eager: true }),
-);
-const tags = [
-  ...new Set(allPosts.map((post: any) => post.frontmatter.tags).flat()),
-];
+const allPosts = await getCollection("blog");
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
 const pageTitle = "Tag Index";
-
-const {} = Astro.params;
-const {} = Astro.props;
 ---
+
+<BaseLayout pageTitle={pageTitle}>
+  <div class="tags">
+    {
+      tags.map((tag) => (
+        <p class="tag">
+          <a href={`/tags/${tag}`}>{tag}</a>
+        </p>
+      ))
+    }
+  </div>
+</BaseLayout>
 
 <style>
   a {
@@ -32,14 +38,3 @@ const {} = Astro.props;
     background-color: #f8fcfd;
   }
 </style>
-<BaseLayout pageTitle={pageTitle}>
-  <div class="tags">
-    {
-      tags.map((tag) => (
-        <p class="tag">
-          <a href={`/tags/${tag}`}>{tag}</a>
-        </p>
-      ))
-    }
-  </div>
-</BaseLayout>
